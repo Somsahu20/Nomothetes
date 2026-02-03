@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Network Graph Visualization - LexGraph Analytics</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#833cf6",
+                        "background-light": "#f7f5f8",
+                        "background-dark": "#171022",
+                        "panel-dark": "#201b27",
+                        "border-dark": "#2e2839",
+                        "judge": "#06b6d4", // Cyan-500
+                        "lawyer": "#10b981", // Emerald-500
+                        "court": "#f97316", // Orange-500
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for dark theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #141118; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2e2839; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #443b54; 
+        }
+        
+        .node-shadow {
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+        .node-selected {
+            box-shadow: 0 0 0 4px rgba(131, 60, 246, 0.4), 0 0 20px rgba(0,0,0,0.6);
+            z-index: 50;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-[#141118] text-slate-900 dark:text-white font-display overflow-hidden h-screen flex flex-col">
+<!-- Top Navigation -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-border-dark px-6 py-3 bg-[#141118] shrink-0 z-20">
+<div class="flex items-center gap-4 text-white">
+<div class="size-8 bg-primary rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-[20px]">hub</span>
+</div>
+<h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em]">LexGraph Analytics</h2>
+</div>
+<div class="flex flex-1 justify-end gap-6 items-center">
+<nav class="hidden md:flex items-center gap-6 text-sm font-medium text-[#a79cba]">
+<a class="text-white hover:text-primary transition-colors" href="#">Visualization</a>
+<a class="hover:text-white transition-colors" href="#">Data Sources</a>
+<a class="hover:text-white transition-colors" href="#">Reports</a>
+</nav>
+<div class="h-6 w-px bg-border-dark mx-2"></div>
+<div class="flex gap-2">
+<button class="flex size-10 cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-border-dark text-white hover:bg-[#443b54] transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<button class="flex size-10 cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-border-dark text-white hover:bg-[#443b54] transition-colors">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-10 ring-2 ring-border-dark ml-2 cursor-pointer" data-alt="User profile avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD97pbV3yoHtJj_PwBWmoZ_ONzDmQjSDOWmyeuvsv29oS1Wn8LICTaLDh0CzNa3tNJzYCI6qD_ZYZj_h7hepDXHsSy4nDnCzapo6sHSAUUneB31SybqI46-99qC8GXK1CDH8_g_Fof0VtGPA_dCwwtto_MAKhBqR314YVG0ybSrro0BIld4mDc_yEw2SOVoRUERduZSntH260d1GuE18JzS9qtlimVIh5g7791akp9irgs9gpv5e6PoafehQM6R0KaPw77-3240xjU");'></div>
+</div>
+</div>
+</header>
+<!-- Main Workspace -->
+<div class="flex flex-1 overflow-hidden relative">
+<!-- Left Sidebar: Controls & Filters -->
+<aside class="w-80 bg-background-dark border-r border-r-border-dark flex flex-col shrink-0 z-10">
+<div class="p-4 border-b border-b-border-dark">
+<h3 class="text-[#a79cba] text-xs font-bold uppercase tracking-wider mb-3">Graph Controls</h3>
+<!-- Search -->
+<div class="relative group mb-4">
+<div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[#a79cba]">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="block w-full p-2.5 pl-10 text-sm bg-panel-dark border border-border-dark rounded-lg placeholder-[#a79cba] text-white focus:ring-primary focus:border-primary transition-all" placeholder="Search entity..." type="text"/>
+</div>
+<!-- Layout Selector -->
+<div class="mb-2">
+<label class="block mb-2 text-sm font-medium text-white">Layout Algorithm</label>
+<div class="relative">
+<select class="bg-panel-dark border border-border-dark text-white text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 appearance-none pr-8">
+<option selected="">Force Atlas 2</option>
+<option value="circle">Circular Layout</option>
+<option value="hierarchical">Hierarchical</option>
+<option value="grid">Grid Layout</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-[#a79cba]">
+<span class="material-symbols-outlined text-[20px]">expand_more</span>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 overflow-y-auto flex-1 custom-scrollbar">
+<h3 class="text-[#a79cba] text-xs font-bold uppercase tracking-wider mb-4">Filters</h3>
+<!-- Range Slider -->
+<div class="mb-6">
+<div class="flex justify-between items-center mb-2">
+<label class="text-sm font-medium text-white">Relationship Strength</label>
+</div>
+<div class="relative h-10 pt-4">
+<div class="h-1 w-full bg-[#443b54] rounded-full">
+<div class="absolute h-1 bg-white rounded-full left-[20%] right-[30%]"></div>
+<div class="absolute top-2 left-[20%] w-4 h-4 bg-white rounded-full cursor-pointer shadow-md hover:scale-110 transition-transform -mt-1.5 flex items-center justify-center group">
+<div class="absolute -top-7 px-2 py-1 bg-[#2e2839] rounded text-[10px] opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap border border-[#443b54]">Min: 0.2</div>
+</div>
+<div class="absolute top-2 right-[30%] w-4 h-4 bg-white rounded-full cursor-pointer shadow-md hover:scale-110 transition-transform -mt-1.5 flex items-center justify-center group">
+<div class="absolute -top-7 px-2 py-1 bg-[#2e2839] rounded text-[10px] opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap border border-[#443b54]">Max: 0.7</div>
+</div>
+</div>
+</div>
+<div class="flex justify-between text-xs text-[#a79cba] mt-[-8px]">
+<span>0.0</span>
+<span>1.0</span>
+</div>
+</div>
+<!-- Entity Toggles -->
+<div class="mb-6 space-y-3" style="--checkbox-tick-svg: url('data:image/svg+xml,%3csvg viewBox=%270 0 16 16%27 fill=%27rgb(255,255,255)%27 xmlns=%27http://www.w3.org/2000/svg%27%3e%3cpath d=%27M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z%27/%3e%3c/svg%3e');">
+<p class="text-sm font-medium text-white mb-2">Node Types</p>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input checked="" class="w-5 h-5 rounded border-2 border-[#443b54] bg-transparent text-judge checked:bg-judge checked:border-judge checked:bg-[image:--checkbox-tick-svg] focus:ring-0 focus:ring-offset-0 focus:border-judge transition-colors" type="checkbox"/>
+<span class="w-3 h-3 rounded-full bg-judge shadow-[0_0_8px_rgba(6,182,212,0.4)]"></span>
+<span class="text-gray-300 text-sm group-hover:text-white transition-colors">Judges</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input checked="" class="w-5 h-5 rounded border-2 border-[#443b54] bg-transparent text-lawyer checked:bg-lawyer checked:border-lawyer checked:bg-[image:--checkbox-tick-svg] focus:ring-0 focus:ring-offset-0 focus:border-lawyer transition-colors" type="checkbox"/>
+<span class="w-3 h-3 rounded-full bg-lawyer shadow-[0_0_8px_rgba(16,185,129,0.4)]"></span>
+<span class="text-gray-300 text-sm group-hover:text-white transition-colors">Lawyers</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input checked="" class="w-5 h-5 rounded border-2 border-[#443b54] bg-transparent text-court checked:bg-court checked:border-court checked:bg-[image:--checkbox-tick-svg] focus:ring-0 focus:ring-offset-0 focus:border-court transition-colors" type="checkbox"/>
+<span class="w-3 h-3 rounded-full bg-court shadow-[0_0_8px_rgba(249,115,22,0.4)]"></span>
+<span class="text-gray-300 text-sm group-hover:text-white transition-colors">Courts</span>
+</label>
+</div>
+<!-- Date Range Simulated -->
+<div class="mb-4">
+<p class="text-sm font-medium text-white mb-3">Time Period</p>
+<div class="grid grid-cols-2 gap-2">
+<div class="bg-panel-dark border border-border-dark rounded p-2">
+<label class="text-[10px] text-[#a79cba] uppercase block">From</label>
+<div class="text-sm text-white">Jan 2018</div>
+</div>
+<div class="bg-panel-dark border border-border-dark rounded p-2">
+<label class="text-[10px] text-[#a79cba] uppercase block">To</label>
+<div class="text-sm text-white">Dec 2023</div>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 border-t border-t-border-dark bg-[#141118]">
+<button class="w-full bg-primary hover:bg-[#6f2cd9] text-white font-medium py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-[18px]">refresh</span>
+                    Apply Filters
+                </button>
+</div>
+</aside>
+<!-- Main Canvas (Interactive Graph) -->
+<main class="flex-1 relative bg-[#141118] overflow-hidden cursor-grab active:cursor-grabbing group/canvas">
+<!-- Grid Background Pattern -->
+<div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(#443b54 1px, transparent 1px); background-size: 24px 24px;">
+</div>
+<!-- Visualization Container (Simulated) -->
+<div class="absolute inset-0 flex items-center justify-center scale-100 transition-transform duration-300 origin-center" id="graph-container">
+<!-- Edges (Simulated with SVG) -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none overflow-visible">
+<defs>
+<lineargradient id="grad1" x1="0%" x2="100%" y1="0%" y2="100%">
+<stop offset="0%" style="stop-color:#443b54;stop-opacity:1"></stop>
+<stop offset="100%" style="stop-color:#2e2839;stop-opacity:1"></stop>
+</lineargradient>
+</defs>
+<!-- Connections from Central Node -->
+<line stroke="#443b54" stroke-width="1.5" x1="50%" x2="35%" y1="50%" y2="30%"></line>
+<line stroke="#443b54" stroke-width="1.5" x1="50%" x2="65%" y1="50%" y2="35%"></line>
+<line stroke="#443b54" stroke-width="1.5" x1="50%" x2="60%" y1="50%" y2="70%"></line>
+<line stroke="#443b54" stroke-width="1.5" x1="50%" x2="40%" y1="50%" y2="75%"></line>
+<line stroke="#443b54" stroke-width="2" x1="50%" x2="30%" y1="50%" y2="55%"></line>
+<line stroke="#443b54" stroke-width="1" x1="50%" x2="70%" y1="50%" y2="50%"></line>
+<!-- Secondary Connections -->
+<line stroke="#2e2839" stroke-width="1" x1="35%" x2="30%" y1="30%" y2="20%"></line>
+<line stroke="#2e2839" stroke-width="1" x1="35%" x2="40%" y1="30%" y2="20%"></line>
+<line stroke="#2e2839" stroke-width="1" x1="60%" x2="65%" y1="70%" y2="80%"></line>
+</svg>
+<!-- Nodes (Simulated with Divs) -->
+<!-- Central Node: Judge (Selected) -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-2 z-30 cursor-pointer">
+<div class="w-16 h-16 rounded-full bg-judge border-4 border-[#141118] node-selected flex items-center justify-center transition-transform hover:scale-110">
+<span class="material-symbols-outlined text-white text-[24px]">gavel</span>
+</div>
+<div class="bg-panel-dark/90 backdrop-blur-sm px-3 py-1 rounded-md border border-border-dark text-white text-sm font-semibold whitespace-nowrap shadow-lg">
+                        Hon. Sarah Jenkins
+                    </div>
+</div>
+<!-- Peripheral Node 1: Lawyer (Top Left) -->
+<div class="absolute top-[30%] left-[35%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-1 z-20 cursor-pointer group">
+<div class="w-10 h-10 rounded-full bg-lawyer border-2 border-[#141118] node-shadow transition-transform hover:scale-110"></div>
+<div class="bg-panel-dark/80 px-2 py-0.5 rounded text-[#a79cba] text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                        Robert Cole
+                    </div>
+</div>
+<!-- Peripheral Node 2: Court (Top Right) -->
+<div class="absolute top-[35%] left-[65%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-1 z-20 cursor-pointer group">
+<div class="w-12 h-12 rounded-full bg-court border-2 border-[#141118] node-shadow transition-transform hover:scale-110 flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-[20px]">account_balance</span>
+</div>
+<div class="bg-panel-dark/80 px-2 py-0.5 rounded text-[#a79cba] text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                        Superior Court CA
+                    </div>
+</div>
+<!-- Peripheral Node 3: Lawyer (Bottom Right) -->
+<div class="absolute top-[70%] left-[60%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-1 z-20 cursor-pointer group">
+<div class="w-8 h-8 rounded-full bg-lawyer border-2 border-[#141118] node-shadow transition-transform hover:scale-110"></div>
+<div class="bg-panel-dark/80 px-2 py-0.5 rounded text-[#a79cba] text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                        Jane Doe
+                    </div>
+</div>
+<!-- Peripheral Node 4: Lawyer (Bottom Left) -->
+<div class="absolute top-[75%] left-[40%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-1 z-20 cursor-pointer group">
+<div class="w-9 h-9 rounded-full bg-lawyer border-2 border-[#141118] node-shadow transition-transform hover:scale-110"></div>
+<div class="bg-panel-dark/80 px-2 py-0.5 rounded text-[#a79cba] text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                        M. Specter
+                    </div>
+</div>
+<!-- Peripheral Node 5: Judge (Left) -->
+<div class="absolute top-[55%] left-[30%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-1 z-20 cursor-pointer group">
+<div class="w-10 h-10 rounded-full bg-judge border-2 border-[#141118] node-shadow transition-transform hover:scale-110"></div>
+<div class="bg-panel-dark/80 px-2 py-0.5 rounded text-[#a79cba] text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                        Hon. B. Wright
+                    </div>
+</div>
+<!-- Peripheral Node 6: Court (Right) -->
+<div class="absolute top-[50%] left-[70%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-1 z-20 cursor-pointer group">
+<div class="w-10 h-10 rounded-full bg-court border-2 border-[#141118] node-shadow transition-transform hover:scale-110"></div>
+<div class="bg-panel-dark/80 px-2 py-0.5 rounded text-[#a79cba] text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                        District Court NY
+                    </div>
+</div>
+</div>
+<!-- Canvas Floating Controls -->
+<div class="absolute bottom-6 right-6 flex flex-col gap-2 z-40">
+<button class="size-10 bg-panel-dark border border-border-dark text-white rounded-lg shadow-lg flex items-center justify-center hover:bg-[#2e2839] hover:text-primary transition-colors">
+<span class="material-symbols-outlined">add</span>
+</button>
+<button class="size-10 bg-panel-dark border border-border-dark text-white rounded-lg shadow-lg flex items-center justify-center hover:bg-[#2e2839] hover:text-primary transition-colors">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<button class="size-10 bg-panel-dark border border-border-dark text-white rounded-lg shadow-lg flex items-center justify-center hover:bg-[#2e2839] hover:text-primary transition-colors mt-2" title="Fit to Screen">
+<span class="material-symbols-outlined">center_focus_strong</span>
+</button>
+</div>
+<!-- Floating Legend -->
+<div class="absolute bottom-6 left-6 bg-panel-dark/90 backdrop-blur border border-border-dark rounded-lg p-3 shadow-lg z-40 hidden md:block">
+<h4 class="text-[10px] font-bold text-[#a79cba] uppercase mb-2">Legend</h4>
+<div class="flex gap-4">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-judge"></div>
+<span class="text-xs text-white">Judge</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-lawyer"></div>
+<span class="text-xs text-white">Lawyer</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-court"></div>
+<span class="text-xs text-white">Court</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Right Drawer: Entity Details -->
+<aside class="w-96 bg-background-dark border-l border-l-border-dark flex flex-col shrink-0 shadow-2xl relative z-20">
+<!-- Header -->
+<div class="p-5 border-b border-b-border-dark">
+<div class="flex justify-between items-start mb-3">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-judge/10 text-judge border border-judge/20">
+<span class="material-symbols-outlined text-[14px]">gavel</span>
+                        Judge
+                    </span>
+<button class="text-[#a79cba] hover:text-white transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<h2 class="text-xl font-bold text-white mb-1">Hon. Sarah Jenkins</h2>
+<p class="text-[#a79cba] text-sm">Superior Court of California, County of San Francisco</p>
+</div>
+<!-- Stats Grid -->
+<div class="grid grid-cols-3 border-b border-b-border-dark divide-x divide-border-dark bg-[#1a1623]">
+<div class="p-3 text-center">
+<div class="text-lg font-bold text-white">142</div>
+<div class="text-[10px] text-[#a79cba] uppercase tracking-wide">Cases</div>
+</div>
+<div class="p-3 text-center">
+<div class="text-lg font-bold text-white">0.85</div>
+<div class="text-[10px] text-[#a79cba] uppercase tracking-wide">Centrality</div>
+</div>
+<div class="p-3 text-center">
+<div class="text-lg font-bold text-white">12y</div>
+<div class="text-[10px] text-[#a79cba] uppercase tracking-wide">Tenure</div>
+</div>
+</div>
+<!-- Tabs -->
+<div class="flex border-b border-b-border-dark">
+<button class="flex-1 py-3 text-sm font-medium text-white border-b-2 border-primary bg-primary/5">Connected Cases</button>
+<button class="flex-1 py-3 text-sm font-medium text-[#a79cba] hover:text-white transition-colors">Analytics</button>
+<button class="flex-1 py-3 text-sm font-medium text-[#a79cba] hover:text-white transition-colors">Details</button>
+</div>
+<!-- Ego Network Preview (Mini Map) -->
+<div class="p-4 border-b border-b-border-dark">
+<h4 class="text-xs font-bold text-white uppercase mb-2">Ego Network</h4>
+<div class="relative w-full h-32 rounded-lg overflow-hidden border border-border-dark bg-[#141118]">
+<img class="w-full h-full object-cover opacity-60" data-alt="Abstract network visualization showing ego network connections" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvb4wDlh0uWRxh2HZ-ly4GQF-kiw1FtYHlSk7t46M1vMZ1sTUGRaqYOuAid1abEHh6C22rcbSRpDTLniWXyILPDtxLsQKTPoCA3YAulmrwClQ1ZRJhokHs2VtxtXSqMmw_DkkVwzT23SaWA1UtAFh4I2FnD37SUSQpqAk0apaO_56BrYdY813PCprEiKOSJwXTA9NQthRFomZdgYpAKfwFh2n_b7bnT9T4d5mf6LdIc8H5nENNtSFNknRDmyz2rDAI1KNfcB2Rgyw"/>
+<div class="absolute inset-0 flex items-center justify-center">
+<button class="bg-panel-dark/80 backdrop-blur border border-border-dark text-white text-xs px-3 py-1.5 rounded-md hover:bg-white hover:text-black transition-colors">
+                             Expand View
+                         </button>
+</div>
+</div>
+</div>
+<!-- Content List -->
+<div class="flex-1 overflow-y-auto custom-scrollbar">
+<div class="p-2">
+<!-- List Item 1 -->
+<div class="p-3 hover:bg-[#201b27] rounded-lg cursor-pointer transition-colors group">
+<div class="flex justify-between items-start mb-1">
+<h5 class="text-sm font-medium text-white group-hover:text-primary transition-colors">State v. Jones</h5>
+<span class="text-[10px] text-[#a79cba] bg-[#2e2839] px-1.5 py-0.5 rounded">2023</span>
+</div>
+<p class="text-xs text-[#a79cba] line-clamp-2">Criminal defense case involving procedural misconduct allegations...</p>
+<div class="mt-2 flex gap-2">
+<span class="inline-flex items-center gap-1 text-[10px] text-lawyer">
+<span class="w-1.5 h-1.5 rounded-full bg-lawyer"></span>
+                                R. Cole
+                            </span>
+<span class="inline-flex items-center gap-1 text-[10px] text-lawyer">
+<span class="w-1.5 h-1.5 rounded-full bg-lawyer"></span>
+                                J. Doe
+                            </span>
+</div>
+</div>
+<!-- List Item 2 -->
+<div class="p-3 hover:bg-[#201b27] rounded-lg cursor-pointer transition-colors group">
+<div class="flex justify-between items-start mb-1">
+<h5 class="text-sm font-medium text-white group-hover:text-primary transition-colors">TechCorp v. StartUp Inc.</h5>
+<span class="text-[10px] text-[#a79cba] bg-[#2e2839] px-1.5 py-0.5 rounded">2022</span>
+</div>
+<p class="text-xs text-[#a79cba] line-clamp-2">Intellectual property dispute regarding software patents and trade secrets.</p>
+<div class="mt-2 flex gap-2">
+<span class="inline-flex items-center gap-1 text-[10px] text-lawyer">
+<span class="w-1.5 h-1.5 rounded-full bg-lawyer"></span>
+                                M. Specter
+                            </span>
+</div>
+</div>
+<!-- List Item 3 -->
+<div class="p-3 hover:bg-[#201b27] rounded-lg cursor-pointer transition-colors group">
+<div class="flex justify-between items-start mb-1">
+<h5 class="text-sm font-medium text-white group-hover:text-primary transition-colors">Estate of H. Bigg</h5>
+<span class="text-[10px] text-[#a79cba] bg-[#2e2839] px-1.5 py-0.5 rounded">2021</span>
+</div>
+<p class="text-xs text-[#a79cba] line-clamp-2">Probate matter contesting will validity based on undue influence.</p>
+</div>
+<!-- List Item 4 -->
+<div class="p-3 hover:bg-[#201b27] rounded-lg cursor-pointer transition-colors group">
+<div class="flex justify-between items-start mb-1">
+<h5 class="text-sm font-medium text-white group-hover:text-primary transition-colors">City Council v. Developers</h5>
+<span class="text-[10px] text-[#a79cba] bg-[#2e2839] px-1.5 py-0.5 rounded">2020</span>
+</div>
+<p class="text-xs text-[#a79cba] line-clamp-2">Zoning regulation appeal.</p>
+</div>
+</div>
+</div>
+<!-- Drawer Footer Actions -->
+<div class="p-4 border-t border-t-border-dark bg-[#141118] flex gap-3">
+<button class="flex-1 bg-transparent border border-border-dark hover:bg-white/5 text-white text-xs font-medium py-2 rounded-lg transition-colors">Export Report</button>
+<button class="flex-1 bg-primary hover:bg-[#6f2cd9] text-white text-xs font-medium py-2 rounded-lg transition-colors">Full Analysis</button>
+</div>
+</aside>
+</div>
+</body></html>

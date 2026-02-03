@@ -1,0 +1,68 @@
+# Git
+.git
+.gitignore
+
+# Documentation
+*.md
+Docs/
+Screens/
+draft.md
+PRD.md
+
+# Python virtual environments
+backend/nomothetes/
+backend/venv/
+backend/.venv/
+backend/ENV/
+
+# Python cache
+**/__pycache__
+**/*.py[cod]
+**/*$py.class
+**/*.so
+
+# Node.js
+frontend/node_modules/
+**/node_modules/
+
+# Build artifacts
+frontend/dist/
+**/*.tsbuildinfo
+frontend/vite.config.d.ts
+frontend/vite.config.js
+
+# Environment files
+.env
+**/.env
+**/.env.local
+**/.env.*.local
+
+# IDE
+.idea/
+.vscode/
+**/*.swp
+**/*.swo
+
+# Testing
+**/.pytest_cache
+**/.coverage
+**/htmlcov/
+**/.tox
+**/.eslintcache
+
+# Logs
+**/*.log
+**/logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Uploads (mounted as volume)
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Docker files (avoid recursion)
+**/Dockerfile
+**/.dockerignore
+docker-compose.override.yml

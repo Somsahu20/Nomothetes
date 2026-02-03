@@ -1,0 +1,40 @@
+# Dependencies
+node_modules
+
+# Build output (rebuilt in Docker)
+dist
+
+# Git
+.git
+.gitignore
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# TypeScript build artifacts
+*.tsbuildinfo
+vite.config.d.ts
+vite.config.js
+
+# Docker
+Dockerfile
+.dockerignore
+
+# Documentation
+*.md
+
+# OS
+.DS_Store
+Thumbs.db

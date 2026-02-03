@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LegalNet Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#833cf6",
+                        "background-light": "#f7f5f8",
+                        "background-dark": "#141118",
+                        "card-dark": "#1f1b26",
+                        "surface-dark": "#2e2839",
+                        "text-secondary": "#a79cba",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-slate-900 dark:text-white overflow-x-hidden antialiased">
+<div class="flex h-screen w-full overflow-hidden">
+<!-- Sidebar -->
+<aside class="hidden w-64 flex-col border-r border-[#2e2839] bg-[#141118] lg:flex">
+<div class="flex h-full flex-col justify-between p-4">
+<div class="flex flex-col gap-6">
+<!-- Logo/Brand -->
+<div class="flex items-center gap-3 px-2">
+<div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-purple-600 shadow-lg shadow-primary/30">
+<span class="material-symbols-outlined text-white" style="font-size: 24px;">balance</span>
+</div>
+<div class="flex flex-col">
+<h1 class="text-white text-base font-bold leading-tight tracking-wide">LegalNet</h1>
+<p class="text-text-secondary text-xs font-normal">Analysis Platform</p>
+</div>
+</div>
+<!-- Navigation -->
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 rounded-lg bg-surface-dark px-3 py-2.5 text-white shadow-sm transition-colors" href="#">
+<span class="material-symbols-outlined filled" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-text-secondary transition-colors hover:bg-surface-dark/50 hover:text-white" href="#">
+<span class="material-symbols-outlined">folder_open</span>
+<span class="text-sm font-medium">Case Files</span>
+</a>
+<a class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-text-secondary transition-colors hover:bg-surface-dark/50 hover:text-white" href="#">
+<span class="material-symbols-outlined">search</span>
+<span class="text-sm font-medium">Entity Search</span>
+</a>
+<a class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-text-secondary transition-colors hover:bg-surface-dark/50 hover:text-white" href="#">
+<span class="material-symbols-outlined">hub</span>
+<span class="text-sm font-medium">Network Graph</span>
+</a>
+<a class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-text-secondary transition-colors hover:bg-surface-dark/50 hover:text-white" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+</nav>
+</div>
+<!-- Action Button & User -->
+<div class="flex flex-col gap-4">
+<button class="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-primary/25 transition-transform hover:scale-[1.02] active:scale-[0.98]">
+<span class="material-symbols-outlined" style="font-size: 20px;">upload_file</span>
+<span>Upload Case</span>
+</button>
+<div class="flex items-center gap-3 rounded-xl border border-[#2e2839] bg-[#1a1620] p-3">
+<div class="h-9 w-9 overflow-hidden rounded-full bg-slate-700 bg-cover bg-center" data-alt="User profile avatar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDfJXTszkc9GRpDKNvDnqzg3oUKc12rdga3mHeemNclpLvLtcQ-VJ9zkruC5ejs0DOkuDulWwVWUQN59uMYiJ5ORe781gHJZNY-vGjdMjaoueK_KTxMBaoZEf6FXUJCkYSB7YGhsg27BrgduxPAVtDcw4dnjcSdWOGgum1ya-eMjOWldiUz6zL7whegUBWDsvPEZkvPUiCxgqtx_bkPF3o-PM6G2vk96wkzbmSmdqTdLkLyjLO5BjSl0hYVBGPSUyLYGSxmhZBytqA')"></div>
+<div class="flex flex-1 flex-col overflow-hidden">
+<p class="truncate text-sm font-medium text-white">Sarah Jenkins</p>
+<p class="truncate text-xs text-text-secondary">Senior Counsel</p>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 overflow-y-auto bg-background-dark">
+<div class="mx-auto flex w-full max-w-[1400px] flex-col gap-6 p-6 lg:p-10">
+<!-- Header Section -->
+<div class="flex flex-col gap-1">
+<div class="flex items-end justify-between">
+<div>
+<h1 class="text-3xl font-bold tracking-tight text-white lg:text-4xl">Good morning, Counsel</h1>
+<p class="mt-2 text-text-secondary">You have 3 active tasks pending review today.</p>
+</div>
+<div class="hidden items-center gap-2 sm:flex">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" style="font-size: 20px;">search</span>
+<input class="h-10 w-64 rounded-full border-none bg-surface-dark pl-10 pr-4 text-sm text-white placeholder-text-secondary focus:ring-2 focus:ring-primary" placeholder="Search cases, entities..." type="text"/>
+</div>
+<button class="flex h-10 w-10 items-center justify-center rounded-full bg-surface-dark text-white transition-colors hover:bg-slate-700">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Stats Grid -->
+<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+<!-- Total Cases -->
+<div class="group relative overflow-hidden rounded-xl bg-surface-dark p-5 transition-all hover:bg-[#362f42]">
+<div class="flex items-start justify-between">
+<div>
+<p class="text-sm font-medium text-text-secondary">Total Cases</p>
+<p class="mt-2 text-3xl font-bold text-white">1,240</p>
+</div>
+<div class="rounded-lg bg-background-dark p-2 text-primary">
+<span class="material-symbols-outlined">folder</span>
+</div>
+</div>
+<div class="mt-4 flex items-center gap-1 text-sm text-emerald-400">
+<span class="material-symbols-outlined" style="font-size: 16px;">trending_up</span>
+<span class="font-medium">+5%</span>
+<span class="ml-1 text-text-secondary">vs last month</span>
+</div>
+</div>
+<!-- Total Entities -->
+<div class="group relative overflow-hidden rounded-xl bg-surface-dark p-5 transition-all hover:bg-[#362f42]">
+<div class="flex items-start justify-between">
+<div>
+<p class="text-sm font-medium text-text-secondary">Total Entities</p>
+<p class="mt-2 text-3xl font-bold text-white">8,503</p>
+</div>
+<div class="rounded-lg bg-background-dark p-2 text-primary">
+<span class="material-symbols-outlined">groups</span>
+</div>
+</div>
+<div class="mt-4 flex items-center gap-1 text-sm text-emerald-400">
+<span class="material-symbols-outlined" style="font-size: 16px;">trending_up</span>
+<span class="font-medium">+12%</span>
+<span class="ml-1 text-text-secondary">vs last month</span>
+</div>
+</div>
+<!-- Connections -->
+<div class="group relative overflow-hidden rounded-xl bg-surface-dark p-5 transition-all hover:bg-[#362f42]">
+<div class="flex items-start justify-between">
+<div>
+<p class="text-sm font-medium text-text-secondary">Connections</p>
+<p class="mt-2 text-3xl font-bold text-white">45.2k</p>
+</div>
+<div class="rounded-lg bg-background-dark p-2 text-primary">
+<span class="material-symbols-outlined">share</span>
+</div>
+</div>
+<div class="mt-4 flex items-center gap-1 text-sm text-emerald-400">
+<span class="material-symbols-outlined" style="font-size: 16px;">trending_up</span>
+<span class="font-medium">+8%</span>
+<span class="ml-1 text-text-secondary">vs last month</span>
+</div>
+</div>
+<!-- Active Tasks -->
+<div class="group relative overflow-hidden rounded-xl bg-surface-dark p-5 transition-all hover:bg-[#362f42]">
+<div class="flex items-start justify-between">
+<div>
+<p class="text-sm font-medium text-text-secondary">Active Tasks</p>
+<p class="mt-2 text-3xl font-bold text-white">12</p>
+</div>
+<div class="rounded-lg bg-background-dark p-2 text-orange-400">
+<span class="material-symbols-outlined">pending_actions</span>
+</div>
+</div>
+<div class="mt-4 flex items-center gap-1 text-sm text-text-secondary">
+<span class="font-medium text-white">3 urgent</span>
+<span class="ml-1">pending review</span>
+</div>
+</div>
+</div>
+<!-- Content Grid (Charts + Activity) -->
+<div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+<!-- Left Column: Charts -->
+<div class="flex flex-col gap-6 lg:col-span-2">
+<div class="rounded-xl bg-surface-dark p-6">
+<div class="mb-6 flex items-center justify-between">
+<div>
+<h2 class="text-lg font-bold text-white">Cases Over Time</h2>
+<p class="text-sm text-text-secondary">Upload volume trend for last 6 months</p>
+</div>
+<button class="rounded-lg bg-background-dark p-2 text-text-secondary hover:text-white">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+<!-- Line Chart SVG -->
+<div class="relative h-64 w-full">
+<svg class="h-full w-full overflow-visible" preserveaspectratio="none" viewbox="0 0 800 200">
+<defs>
+<lineargradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#833cf6" stop-opacity="0.2"></stop>
+<stop offset="100%" stop-color="#833cf6" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<!-- Grid lines -->
+<line stroke="#3f374e" stroke-width="1" x1="0" x2="800" y1="199" y2="199"></line>
+<line stroke="#3f374e" stroke-dasharray="4 4" stroke-width="1" x1="0" x2="800" y1="150" y2="150"></line>
+<line stroke="#3f374e" stroke-dasharray="4 4" stroke-width="1" x1="0" x2="800" y1="100" y2="100"></line>
+<line stroke="#3f374e" stroke-dasharray="4 4" stroke-width="1" x1="0" x2="800" y1="50" y2="50"></line>
+<!-- Chart Path -->
+<path d="M0 150 C 100 150, 150 80, 200 80 C 250 80, 300 120, 400 100 C 500 80, 550 40, 650 60 C 700 70, 750 20, 800 30 V 200 H 0 Z" fill="url(#chartGradient)"></path>
+<path d="M0 150 C 100 150, 150 80, 200 80 C 250 80, 300 120, 400 100 C 500 80, 550 40, 650 60 C 700 70, 750 20, 800 30" fill="none" stroke="#833cf6" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path>
+<!-- Data Points -->
+<circle cx="200" cy="80" fill="#141118" r="4" stroke="#833cf6" stroke-width="2"></circle>
+<circle cx="400" cy="100" fill="#141118" r="4" stroke="#833cf6" stroke-width="2"></circle>
+<circle cx="650" cy="60" fill="#141118" r="4" stroke="#833cf6" stroke-width="2"></circle>
+<circle cx="800" cy="30" fill="#141118" r="4" stroke="#833cf6" stroke-width="2"></circle>
+</svg>
+</div>
+<div class="mt-2 flex justify-between text-xs font-medium text-text-secondary">
+<span>Jun</span>
+<span>Jul</span>
+<span>Aug</span>
+<span>Sep</span>
+<span>Oct</span>
+<span>Nov</span>
+</div>
+</div>
+<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+<!-- Donut Chart Area -->
+<div class="flex flex-col rounded-xl bg-surface-dark p-6">
+<h2 class="mb-4 text-lg font-bold text-white">Entity Distribution</h2>
+<div class="flex flex-1 items-center justify-center gap-8">
+<div class="relative h-32 w-32 shrink-0">
+<svg class="h-full w-full -rotate-90" viewbox="0 0 36 36">
+<!-- Background Circle -->
+<path class="text-background-dark" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="8"></path>
+<!-- Person Segment (40%) -->
+<path class="text-primary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="40, 100" stroke-width="8"></path>
+<!-- Org Segment (35%) -->
+<path class="text-purple-400" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="35, 100" stroke-dashoffset="-40" stroke-width="8"></path>
+<!-- Location Segment (25%) -->
+<path class="text-purple-200" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="25, 100" stroke-dashoffset="-75" stroke-width="8"></path>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-lg font-bold text-white">8.5k</span>
+<span class="text-[10px] text-text-secondary">Total</span>
+</div>
+</div>
+<div class="flex flex-col justify-center gap-3">
+<div class="flex items-center gap-2">
+<div class="h-3 w-3 rounded-full bg-primary"></div>
+<span class="text-sm text-text-secondary">Person</span>
+<span class="ml-auto text-sm font-bold text-white">40%</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="h-3 w-3 rounded-full bg-purple-400"></div>
+<span class="text-sm text-text-secondary">Org</span>
+<span class="ml-auto text-sm font-bold text-white">35%</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="h-3 w-3 rounded-full bg-purple-200"></div>
+<span class="text-sm text-text-secondary">Location</span>
+<span class="ml-auto text-sm font-bold text-white">25%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Action / Insight -->
+<div class="flex flex-col justify-between rounded-xl bg-gradient-to-br from-[#2e2839] to-[#25202e] p-6">
+<div>
+<div class="mb-3 inline-flex rounded-lg bg-primary/20 p-2 text-primary">
+<span class="material-symbols-outlined">lightbulb</span>
+</div>
+<h3 class="mb-2 text-lg font-bold text-white">Analysis Insight</h3>
+<p class="text-sm leading-relaxed text-text-secondary">Based on recent uploads, there is a <strong>15% increase</strong> in connections related to the "Acme Corp" entity cluster.</p>
+</div>
+<button class="mt-4 w-full rounded-lg border border-primary/30 bg-primary/10 py-2 text-sm font-medium text-primary hover:bg-primary/20">
+                                    View Cluster Details
+                                </button>
+</div>
+</div>
+</div>
+<!-- Right Column: Recent Activity -->
+<div class="flex flex-col rounded-xl bg-surface-dark">
+<div class="border-b border-background-dark p-6 pb-4">
+<h2 class="text-lg font-bold text-white">Recent Activity</h2>
+<p class="text-sm text-text-secondary">Latest 5 uploaded documents</p>
+</div>
+<div class="flex flex-1 flex-col p-4">
+<!-- Item 1 -->
+<div class="group flex items-center gap-4 rounded-lg p-3 transition-colors hover:bg-background-dark/50">
+<div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-background-dark text-text-secondary group-hover:bg-primary/20 group-hover:text-primary">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div class="flex min-w-0 flex-1 flex-col">
+<p class="truncate text-sm font-medium text-white">Doe_v_Smith_Contract.pdf</p>
+<p class="text-xs text-text-secondary">Today, 10:23 AM</p>
+</div>
+<span class="rounded-full bg-yellow-500/10 px-2.5 py-1 text-xs font-medium text-yellow-500">Processing</span>
+</div>
+<!-- Item 2 -->
+<div class="group flex items-center gap-4 rounded-lg p-3 transition-colors hover:bg-background-dark/50">
+<div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-background-dark text-text-secondary group-hover:bg-primary/20 group-hover:text-primary">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div class="flex min-w-0 flex-1 flex-col">
+<p class="truncate text-sm font-medium text-white">Merger_Agreement_Final.docx</p>
+<p class="text-xs text-text-secondary">Yesterday, 4:15 PM</p>
+</div>
+<span class="rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-400">Complete</span>
+</div>
+<!-- Item 3 -->
+<div class="group flex items-center gap-4 rounded-lg p-3 transition-colors hover:bg-background-dark/50">
+<div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-background-dark text-text-secondary group-hover:bg-primary/20 group-hover:text-primary">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div class="flex min-w-0 flex-1 flex-col">
+<p class="truncate text-sm font-medium text-white">Witness_Statement_v2.pdf</p>
+<p class="text-xs text-text-secondary">Yesterday, 2:30 PM</p>
+</div>
+<span class="rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-400">Complete</span>
+</div>
+<!-- Item 4 -->
+<div class="group flex items-center gap-4 rounded-lg p-3 transition-colors hover:bg-background-dark/50">
+<div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-background-dark text-text-secondary group-hover:bg-primary/20 group-hover:text-primary">
+<span class="material-symbols-outlined">grid_on</span>
+</div>
+<div class="flex min-w-0 flex-1 flex-col">
+<p class="truncate text-sm font-medium text-white">Financial_Report_Q3.xlsx</p>
+<p class="text-xs text-text-secondary">Oct 24, 11:00 AM</p>
+</div>
+<span class="rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-400">Complete</span>
+</div>
+<!-- Item 5 -->
+<div class="group flex items-center gap-4 rounded-lg p-3 transition-colors hover:bg-background-dark/50">
+<div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-background-dark text-text-secondary group-hover:bg-primary/20 group-hover:text-primary">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div class="flex min-w-0 flex-1 flex-col">
+<p class="truncate text-sm font-medium text-white">IP_Litigation_Brief.pdf</p>
+<p class="text-xs text-text-secondary">Oct 24, 09:45 AM</p>
+</div>
+<span class="rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-400">Complete</span>
+</div>
+</div>
+<div class="border-t border-background-dark p-4">
+<button class="w-full text-center text-sm font-medium text-primary hover:text-primary/80">View all activity</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>
