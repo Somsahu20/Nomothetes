@@ -1,10 +1,8 @@
 from datetime import datetime, timedelta
 from fastapi import APIRouter, Depends, HTTPException, status, Response, Request
 from sqlalchemy.orm import Session
-from typing import Optional
 import logging
-from slowapi import Limiter
-from slowapi.util import get_remote_address
+
 
 from app.db.session import get_db
 from app.models.user import User, RefreshToken
@@ -29,13 +27,12 @@ from app.core.config import settings
 from app.api.deps import get_current_user
 
 logger = logging.getLogger(__name__)
-limiter = Limiter(key_func=get_remote_address)
+
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 
 @router.post("/register", response_model=RegisterResponse, status_code=status.HTTP_201_CREATED)
-@limiter.limit(settings.RATE_LIMIT_REGISTER)
 async def register(
     request: Request,
     user_data: UserCreate,
@@ -73,7 +70,6 @@ async def register(
 
 
 @router.post("/login", response_model=TokenResponse)
-@limiter.limit(settings.RATE_LIMIT_LOGIN)
 async def login(
     login_data: UserLogin,
     response: Response,
@@ -195,7 +191,6 @@ async def logout(
 
 
 @router.post("/refresh", response_model=RefreshTokenResponse)
-@limiter.limit(settings.RATE_LIMIT_REFRESH)
 async def refresh_token(
     request: Request,
     response: Response,
@@ -302,7 +297,6 @@ async def update_profile(
 
 
 @router.post("/logout-all", response_model=MessageResponse)
-@limiter.limit(settings.RATE_LIMIT_LOGOUT_ALL)
 async def logout_all_sessions(
     request: Request,
     response: Response,

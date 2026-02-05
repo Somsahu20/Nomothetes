@@ -6,8 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query, Request
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from pydantic import BaseModel
-from slowapi import Limiter
-from slowapi.util import get_remote_address
+
 
 from app.db.session import get_db
 from app.models.entity import Entity
@@ -18,7 +17,6 @@ from app.services.network_service import network_service
 from app.core.config import settings
 
 logger = logging.getLogger(__name__)
-limiter = Limiter(key_func=get_remote_address)
 
 router = APIRouter(prefix="/network", tags=["Network"])
 
@@ -89,7 +87,6 @@ class EntityListResponse(BaseModel):
 
 
 @router.get("/graph", response_model=NetworkGraphResponse)
-@limiter.limit(settings.RATE_LIMIT_NETWORK_GRAPH)
 async def get_network_graph(
     request: Request,
     current_user: User = Depends(get_current_user),

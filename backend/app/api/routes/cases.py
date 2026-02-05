@@ -6,8 +6,7 @@ import logging
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Form, Query, Request, BackgroundTasks
 from sqlalchemy.orm import Session
 from sqlalchemy import func
-from slowapi import Limiter
-from slowapi.util import get_remote_address
+
 
 from app.db.session import get_db
 from app.models.case import Case
@@ -29,13 +28,12 @@ from app.schemas.case import CaseReprocessResponse
 from app.core.config import settings
 
 logger = logging.getLogger(__name__)
-limiter = Limiter(key_func=get_remote_address)
+
 
 router = APIRouter(prefix="/cases", tags=["Cases"])
 
 
 @router.post("/upload", response_model=CaseUploadResponse, status_code=status.HTTP_201_CREATED)
-@limiter.limit(settings.RATE_LIMIT_UPLOAD)
 async def upload_case(
     request: Request,
     background_tasks: BackgroundTasks,
@@ -286,7 +284,6 @@ async def get_case_entities(
 
 
 @router.post("/{case_id}/reprocess", response_model=CaseReprocessResponse)
-@limiter.limit(settings.RATE_LIMIT_REPROCESS)
 async def reprocess_case(
     request: Request,
     case_id: UUID,

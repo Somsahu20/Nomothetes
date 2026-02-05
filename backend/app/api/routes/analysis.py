@@ -1,11 +1,10 @@
 import logging
-from typing import List
+
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
-from slowapi import Limiter
-from slowapi.util import get_remote_address
+
 
 from app.db.session import get_db
 from app.models.case import Case
@@ -22,8 +21,6 @@ from app.services.gemini_analysis_service import gemini_analysis_service
 from app.core.config import settings
 
 logger = logging.getLogger(__name__)
-limiter = Limiter(key_func=get_remote_address)
-
 router = APIRouter(prefix="/analysis", tags=["AI Analysis"])
 
 VALID_ANALYSIS_TYPES = ["summary", "sentiment", "arguments"]
@@ -105,7 +102,6 @@ async def get_specific_analysis(
 
 
 @router.post("/case/{case_id}/analyze", response_model=AnalysisTriggerResponse)
-@limiter.limit(settings.RATE_LIMIT_ANALYZE)
 async def trigger_analysis(
     request: Request,
     case_id: UUID,

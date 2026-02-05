@@ -5,8 +5,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, Query, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from sqlalchemy import func, text, or_
-from slowapi import Limiter
-from slowapi.util import get_remote_address
+
 
 from app.db.session import get_db
 from app.models.case import Case
@@ -17,13 +16,12 @@ from app.schemas.search import SearchResponse, SearchResultItem
 from app.core.config import settings
 
 logger = logging.getLogger(__name__)
-limiter = Limiter(key_func=get_remote_address)
+
 
 router = APIRouter(prefix="/search", tags=["Search"])
 
 
 @router.get("", response_model=SearchResponse)
-@limiter.limit(settings.RATE_LIMIT_SEARCH)
 async def search(
     request: Request,
     q: str = Query(..., min_length=1, max_length=500, description="Search query"),
@@ -184,7 +182,7 @@ def search_entities(db: Session, user_id: UUID, query: str, offset: int, limit: 
 
 
 @router.get("/suggestions")
-@limiter.limit(settings.RATE_LIMIT_SUGGESTIONS)
+
 async def search_suggestions(
     request: Request,
     q: str = Query(..., min_length=2, max_length=100),
