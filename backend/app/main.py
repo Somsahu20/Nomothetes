@@ -51,9 +51,6 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Add rate limiter to app state
-app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 origins = settings.ALLOWED_ORIGINS
 origins = origins.split(",")
