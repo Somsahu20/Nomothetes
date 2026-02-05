@@ -115,6 +115,9 @@ async def health_check():
         "version": settings.APP_VERSION
     }
 
+@app.get("/")
+async def start():
+    return {"message": "Success"}
 
 # Include routers
 app.include_router(auth.router, prefix="/api")
