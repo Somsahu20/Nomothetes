@@ -26,26 +26,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      redis:
-        condition: service_started
-    volumes:
-      - uploads:/app/uploads
-
-  # Background Worker
-  worker:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: worker
-    restart: always
-    command: python worker.py
-    env_file:
-      - .env
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_started
     volumes:
       - uploads:/app/uploads
 
@@ -68,23 +48,6 @@ services:
       timeout: 5s
       retries: 5
 
-  # Redis Cache & Queue
-  redis:
-    image: redis:7-alpine
-    container_name: redis
-    restart: always
-    command: redis-server --appendonly yes
-    volumes:
-      - redis_data:/data
-    ports:
-      - "6379:6379"
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
 volumes:
   postgres_data:
-  redis_data:
   uploads:

@@ -19,9 +19,7 @@ from app.api.routes import (
     search
 )
 
-import redis
 
-redis_client = redis.from_url(settings.REDIS_URL)
 
 # Import all models to register them with SQLAlchemy before any DB operations
 from app.models import User, RefreshToken, Case, Entity, EntityAlias, AnalysisResult, NetworkMetric
@@ -38,8 +36,6 @@ limiter = Limiter(key_func=get_remote_address)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    redis_client.ping()
-    logger.info("Redis connected")
     logger.info(f"Starting {settings.APP_NAME} v{settings.APP_VERSION}")
     logger.info(f"CORS origins: {settings.ALLOWED_ORIGINS}")
     yield

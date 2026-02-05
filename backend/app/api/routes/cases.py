@@ -3,7 +3,7 @@ from typing import Optional
 from uuid import UUID
 import logging
 
-from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Form, Query, Request
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Form, Query, Request, BackgroundTasks
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from slowapi import Limiter
@@ -24,6 +24,7 @@ from app.schemas.case import (
 from app.schemas.entity import CaseEntitiesResponse, EntityResponse
 from app.services.file_service import file_service
 from app.services.task_service import task_service, TaskType
+from app.services.processing_service import process_document, reprocess_entities
 from app.schemas.case import CaseReprocessResponse
 from app.core.config import settings
 
@@ -37,6 +38,7 @@ router = APIRouter(prefix="/cases", tags=["Cases"])
 @limiter.limit(settings.RATE_LIMIT_UPLOAD)
 async def upload_case(
     request: Request,
+    background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
     court_name: Optional[str] = Form(None),
     case_date: Optional[date] = Form(None),
@@ -66,12 +68,13 @@ async def upload_case(
     db.commit()
     db.refresh(new_case)
 
-    # Create processing task
+    # Create processing task and run in background
     task_id = task_service.create_task(
         task_type=TaskType.OCR,
         user_id=str(current_user.user_id),
         case_id=str(new_case.case_id)
     )
+    background_tasks.add_task(process_document, task_id, str(new_case.case_id), str(current_user.user_id))
 
     logger.info(f"Case {new_case.case_id} uploaded by user {current_user.user_id}")
 
@@ -287,6 +290,7 @@ async def get_case_entities(
 async def reprocess_case(
     request: Request,
     case_id: UUID,
+    background_tasks: BackgroundTasks,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
@@ -334,12 +338,13 @@ async def reprocess_case(
     case.status = "processing"
     db.commit()
 
-    # Create new entity extraction task
+    # Create new entity extraction task and run in background
     task_id = task_service.create_task(
         task_type=TaskType.ENTITY_EXTRACTION,
         user_id=str(current_user.user_id),
         case_id=str(case_id)
     )
+    background_tasks.add_task(reprocess_entities, task_id, str(case_id), str(current_user.user_id))
 
     logger.info(f"Case {case_id} queued for reprocessing by user {current_user.user_id}")
 

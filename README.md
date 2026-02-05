@@ -26,7 +26,6 @@ Nomothetes helps legal researchers, law firms, and analysts process legal docume
 | Framework | FastAPI |
 | Database | PostgreSQL 15 |
 | ORM | SQLAlchemy |
-| Cache/Queue | Redis |
 | OCR | PyMuPDF + Tesseract |
 | AI/NER | Google Gemini API |
 | Auth | JWT + Argon2 |
@@ -58,7 +57,6 @@ Nomothetes/
 │   │   ├── services/        # Business logic
 │   │   └── main.py          # FastAPI entry point
 │   ├── migrations/          # Alembic migrations
-│   ├── worker.py            # Background task worker
 │   └── Dockerfile
 ├── frontend/
 │   ├── src/
@@ -101,9 +99,6 @@ Nomothetes/
    DB_NAME=nomothetes
    DB_USER=postgres
    PASSWORD=your_secure_password
-
-   # Redis
-   REDIS_URL=redis://redis:6379
 
    # JWT
    JWT_SECRET=your_jwt_secret_key

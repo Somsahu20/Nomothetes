@@ -22,9 +22,6 @@ class Settings(BaseSettings):
     DB_HOST: str
     DB_USER: str
 
-    # Redis
-    REDIS_URL: str
-
     # JWT Configuration
     JWT_SECRET: str
     ALGORITHM: str 
@@ -36,18 +33,6 @@ class Settings(BaseSettings):
     MAX_LOGIN_ATTEMPTS: int = 5
     LOCKOUT_MINUTES: int = 15
 
-    # Rate Limiting
-    RATE_LIMIT_LOGIN: str = "5/15minute"
-    RATE_LIMIT_REGISTER: str = "3/hour"
-    RATE_LIMIT_UPLOAD: str = "10/hour"
-    RATE_LIMIT_ANALYZE: str = "5/hour"
-    RATE_LIMIT_SEARCH: str = "100/hour"
-    RATE_LIMIT_REPROCESS: str = "5/hour"
-    RATE_LIMIT_SUGGESTIONS: str = "200/hour"
-    RATE_LIMIT_NETWORK_GRAPH: str = "30/hour"
-    RATE_LIMIT_TASK_RETRY: str = "10/hour"
-    RATE_LIMIT_REFRESH: str = "30/hour"
-    RATE_LIMIT_LOGOUT_ALL: str = "5/hour"
 
     # File Upload
     UPLOAD_PATH: str
